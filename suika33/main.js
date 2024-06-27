@@ -5,7 +5,8 @@ const Engine = Matter.Engine,
       Runner = Matter.Runner,
       World = Matter.World,
       Bodies = Matter.Bodies,
-      Body = Matter.Body;
+      Body = Matter.Body,
+      Events = Matter.Events;
 
 // 앤진 선언
 const engine = Engine.create();
@@ -106,5 +107,35 @@ window.onkeydown = (e) =>{
             break;    
     }
 }
+
+Events.on(engine, "collisionStart", (event) => {
+
+    event.pairs.forEach((collision) => {
+        if (collision.bodyA.index == collision.bodyB.index) {
+
+            const index = collision.bodyA.index;
+
+            World.remove(world, [collision.bodyA, collision.bodyB]);
+
+            const newFruit = FRUITS[index + 1];
+            console.log(newFruit.radius)
+            const newBody = Bodies.circle(
+
+                collision.collision.supports[0].x,
+                collision.collision.supports[0].y,
+                newFruit.radius,
+                {
+                    index : index + 1,
+                    render : {sprite : {texture : `${newFruit.name}.png`}},
+                }
+
+            );
+
+            World.add(world, newBody);
+        };
+
+    });
+
+})
 
 addFruit();
